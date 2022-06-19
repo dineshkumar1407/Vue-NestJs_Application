@@ -28,16 +28,20 @@ let UsersController = class UsersController {
         return this.service.createUser(user);
     }
     async login(req) {
-        return { messge: "User loged in", user: req.user };
+        return { message: "User loged in", user: req.user };
     }
     getHello(req) {
         return req.user;
+    }
+    logout(req) {
+        console.log(req);
+        req.session.destroy();
+        return { msg: 'The user session has ended' };
     }
     getAllUsers() {
         return this.service.getUsers();
     }
     getUserByName(params) {
-        console.log(params);
         return this.service.getUserByUserName(params.email);
     }
     update(user) {
@@ -70,6 +74,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", String)
 ], UsersController.prototype, "getHello", null);
+__decorate([
+    (0, common_1.Get)('/logout'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Object)
+], UsersController.prototype, "logout", null);
 __decorate([
     (0, common_1.Get)("/all"),
     __metadata("design:type", Function),

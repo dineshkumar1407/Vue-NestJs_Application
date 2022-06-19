@@ -17,14 +17,19 @@ export class UsersController {
       @Post('/login')
       async login(@Request() req) {
 
-        return {messge:"User loged in",user:req.user}
+        return {message:"User loged in",user:req.user}
       }
       @UseGuards(AuthenticatedGuard)
       @Get('/protected')
       getHello(@Request() req): string {
         return req.user;
       }
-
+      @Get('/logout')
+      logout(@Request() req): any {
+        console.log(req)
+        req.session.destroy();
+        return {msg: 'The user session has ended' }
+      }
       @Get("/all")
       getAllUsers(){
         return this.service.getUsers()
@@ -32,7 +37,6 @@ export class UsersController {
      
       @Get(':email')
       getUserByName(@Param() params) {
-        console.log(params)
           return this.service.getUserByUserName(params.email);
       }
       @Put(":id")
@@ -44,4 +48,5 @@ export class UsersController {
     deleteUser(@Param() params) {
         return this.service.deleteUser(params.id);
     }
+   
 }

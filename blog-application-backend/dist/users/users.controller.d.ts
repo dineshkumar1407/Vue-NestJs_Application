@@ -11,10 +11,11 @@ export declare class UsersController {
         email: string;
     }>;
     login(req: any): Promise<{
-        messge: string;
+        message: string;
         user: any;
     }>;
     getHello(req: any): string;
+    logout(req: any): any;
     getAllUsers(): Promise<User[]>;
     getUserByName(params: any): Promise<any>;
     update(user: User): Promise<void>;

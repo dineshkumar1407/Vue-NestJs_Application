@@ -31,6 +31,9 @@ let AuthService = class AuthService {
     async validateUser(username, password) {
         const user = await this.usersService.getUserByUserName(username);
         const passwordValid = await bcrypt.compare(password, user.password);
+        if (!user) {
+            throw new common_1.NotAcceptableException('could not find the user');
+        }
         if (user && passwordValid) {
             const { password } = user, result = __rest(user, ["password"]);
             return result;

@@ -10,8 +10,6 @@ import { AuthService } from './auth.service';
       }
       async validate(username: string, password: string): Promise<any> {
         const user = await this.authService.validateUser(username, password);
-        console.log("local")
-
         if (!user) {
           throw new UnauthorizedException();
         }
