@@ -34,7 +34,6 @@ let UsersController = class UsersController {
         return req.user;
     }
     logout(req) {
-        console.log(req);
         req.session.destroy();
         return { msg: 'The user session has ended' };
     }

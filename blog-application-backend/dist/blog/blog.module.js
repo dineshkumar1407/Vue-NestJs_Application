@@ -6,28 +6,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.BlogModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const users_module_1 = require("./users/users.module");
-const app_controller_1 = require("./app.controller");
-const app_service_1 = require("./app.service");
-const typeorm_config_1 = require("./config/typeorm.config");
-const auth_module_1 = require("./auth/auth.module");
-const blog_module_1 = require("./blog/blog.module");
-let AppModule = class AppModule {
+const auth_module_1 = require("../auth/auth.module");
+const users_module_1 = require("../users/users.module");
+const blog_controller_1 = require("./blog.controller");
+const blog_entity_1 = require("./blog.entity");
+const blog_service_1 = require("./blog.service");
+let BlogModule = class BlogModule {
 };
-AppModule = __decorate([
+BlogModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forRoot(typeorm_config_1.typeOrmConfig),
-            users_module_1.UsersModule,
+            typeorm_1.TypeOrmModule.forFeature([blog_entity_1.Blog]),
             auth_module_1.AuthModule,
-            blog_module_1.BlogModule
+            users_module_1.UsersModule
         ],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        controllers: [blog_controller_1.BlogController],
+        providers: [blog_service_1.BlogService]
     })
-], AppModule);
-exports.AppModule = AppModule;
-//# sourceMappingURL=app.module.js.map
+], BlogModule);
+exports.BlogModule = BlogModule;
+//# sourceMappingURL=blog.module.js.map

@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
+const blog_entity_1 = require("../blog/blog.entity");
 let User = class User {
 };
 __decorate([
@@ -38,6 +39,10 @@ __decorate([
     (0, typeorm_1.Column)({ default: true }),
     __metadata("design:type", Boolean)
 ], User.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(type => blog_entity_1.Blog, blog => blog.author),
+    __metadata("design:type", Array)
+], User.prototype, "blogs", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

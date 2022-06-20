@@ -10,5 +10,6 @@ export const typeOrmConfig:TypeOrmModuleOptions={
         "password": "toor@123",
         "database": "blog_app",
         "entities": [join(__dirname, "/../**/*.entity{.ts,.js}")],
-        "synchronize": true
+        "synchronize": true,
+        "autoLoadEntities":true
       }

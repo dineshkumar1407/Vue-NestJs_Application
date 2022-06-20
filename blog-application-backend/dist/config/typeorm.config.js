@@ -10,6 +10,7 @@ exports.typeOrmConfig = {
     "password": "toor@123",
     "database": "blog_app",
     "entities": [(0, path_1.join)(__dirname, "/../**/*.entity{.ts,.js}")],
-    "synchronize": true
+    "synchronize": true,
+    "autoLoadEntities": true
 };
 //# sourceMappingURL=typeorm.config.js.map

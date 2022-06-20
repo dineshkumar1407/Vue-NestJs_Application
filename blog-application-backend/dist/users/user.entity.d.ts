@@ -1,3 +1,4 @@
+import { Blog } from 'src/blog/blog.entity';
 export declare class User {
     id: number;
     username: string;
@@ -5,4 +6,5 @@ export declare class User {
     password: string;
     createdAt: Date;
     isActive: boolean;
+    blogs: Blog[];
 }

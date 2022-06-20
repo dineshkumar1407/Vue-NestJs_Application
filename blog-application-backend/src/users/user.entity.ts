@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn,CreateDateColumn,BeforeInsert } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn,CreateDateColumn,BeforeInsert, OneToMany } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { Blog } from 'src/blog/blog.entity';
 
 @Entity()
 export class User {
@@ -22,4 +23,7 @@ export class User {
 
     @Column({ default: true })
     isActive:boolean;
+    
+    @OneToMany(type => Blog, blog => blog.author)
+    blogs: Blog[];
 }
