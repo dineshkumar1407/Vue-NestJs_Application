@@ -14,11 +14,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlogService = void 0;
 const common_1 = require("@nestjs/common");
-const rxjs_1 = require("rxjs");
 const typeorm_1 = require("@nestjs/typeorm");
 const blog_entity_1 = require("./blog.entity");
 const typeorm_2 = require("typeorm");
-const operators_1 = require("rxjs/operators");
 const users_service_1 = require("../users/users.service");
 const slugify = require('slugify');
 let BlogService = class BlogService {
@@ -26,16 +24,26 @@ let BlogService = class BlogService {
         this.blogRepository = blogRepository;
         this.userService = userService;
     }
-    async create(user, blog) {
+    async create(user, blog, blogSender) {
         blog.author = user;
-        console.log(blog);
-        return await this.generateSlug(blog.title).pipe((0, operators_1.switchMap)(async (slug) => {
-            blog.slug = slug;
-            return await this.blogRepository.save(blog);
-        }));
+        blog.slug = await this.generateSlug(blog.title);
+        const newBlog = await this.blogRepository.save(blog);
+        if (newBlog) {
+            const message = {
+                body: { newBlog },
+                subject: "blog_created"
+            };
+            await blogSender.sendMessages(message);
+            blogSender.close();
+        }
+        return {
+            message: "Blog created successfully",
+            id: newBlog.id,
+        };
     }
-    findAll() {
-        return (0, rxjs_1.from)(this.blogRepository.find({ relations: ['author'] }));
+    async findAll() {
+        const myblogs = await this.blogRepository.find({ relations: ['author'] });
+        return myblogs;
     }
     async findOne(id) {
         const user = await this.blogRepository.findOne({
@@ -55,7 +63,6 @@ let BlogService = class BlogService {
         return user;
     }
     async updateOne(id, blog) {
-        console.log("isnide updateoNE SERVICE", id, blog);
         const user = await this.blogRepository.update(id, blog);
         return user;
     }
@@ -63,7 +70,7 @@ let BlogService = class BlogService {
         return this.blogRepository.delete(id);
     }
     generateSlug(title) {
-        return (0, rxjs_1.of)(slugify(title));
+        return slugify(title);
     }
 };
 BlogService = __decorate([

@@ -4,13 +4,15 @@ import { User } from './user.entity';
 import { LocalAuthGuard } from 'src/auth/local.auth.guard';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
 import { AuthService } from 'src/auth/auth.service';
+import { usersQueueName,sbClientConnection } from '../app.module';
+
 @Controller('users')
 export class UsersController {
-
+   private Usersender=sbClientConnection.createSender(usersQueueName)
     constructor(private authService:AuthService,private service: UsersService,) { }
     @Post("/register")
      create(@Body() user: User) {
-        return this.service.createUser(user);
+        return this.service.createUser(user,this.Usersender);
     }
 
       @UseGuards(LocalAuthGuard)

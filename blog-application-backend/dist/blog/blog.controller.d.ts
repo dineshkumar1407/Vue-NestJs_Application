@@ -7,6 +7,7 @@ export declare const storage: {
 };
 export declare class BlogController {
     private blogService;
+    private blogSender;
     constructor(blogService: BlogService);
     create(blog: Blog, req: any): Promise<any>;
     findOne(params: any): Promise<Blog>;

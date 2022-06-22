@@ -3,11 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import * as brcypt from "bcrypt"
+import { ServiceBusMessage } from '@azure/service-bus';
 
 @Injectable()
 export class UsersService {
     constructor(@InjectRepository(User) private usersRepository: Repository<User>) { }
-    async createUser(user: User) {
+    async createUser(user: User,userSender):Promise<any> {
+
         const saltOrRounds = 10;
         const hashedPassword = await brcypt.hash(user.password, saltOrRounds);
         const newUser={
@@ -18,9 +20,20 @@ export class UsersService {
             createdAt:user.createdAt,
             isActive:user.isActive
         }
-        this.usersRepository.save(newUser)
+        
+       const addUser= await this.usersRepository.save(newUser)
+       if(addUser){
+
+        const {password, ...user} = addUser;
+        const message:ServiceBusMessage={
+            body:{user},
+            subject:"user_created"
+        }
+        await userSender.sendMessages(message)
+        userSender.close()
+       }
         return{
-            msg:"User registartion sucesss",
+            msg:"User registeration sucesss",
             id:newUser.id,
             email:newUser.email
         
@@ -44,10 +57,10 @@ export class UsersService {
     }
 
     async updateUser(user: User) {
-        this.usersRepository.save(user)
+       await this.usersRepository.save(user)
     }
 
     async deleteUser(id): Promise<void> {
-        this.usersRepository.delete(id);
+        await this.usersRepository.delete(id);
     }
 }

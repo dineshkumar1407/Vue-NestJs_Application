@@ -11,6 +11,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
@@ -22,7 +33,7 @@ let UsersService = class UsersService {
     constructor(usersRepository) {
         this.usersRepository = usersRepository;
     }
-    async createUser(user) {
+    async createUser(user, userSender) {
         const saltOrRounds = 10;
         const hashedPassword = await brcypt.hash(user.password, saltOrRounds);
         const newUser = {
@@ -33,9 +44,18 @@ let UsersService = class UsersService {
             createdAt: user.createdAt,
             isActive: user.isActive
         };
-        this.usersRepository.save(newUser);
+        const addUser = await this.usersRepository.save(newUser);
+        if (addUser) {
+            const { password } = addUser, user = __rest(addUser, ["password"]);
+            const message = {
+                body: { user },
+                subject: "user_created"
+            };
+            await userSender.sendMessages(message);
+            userSender.close();
+        }
         return {
-            msg: "User registartion sucesss",
+            msg: "User registeration sucesss",
             id: newUser.id,
             email: newUser.email
         };
@@ -54,10 +74,10 @@ let UsersService = class UsersService {
         });
     }
     async updateUser(user) {
-        this.usersRepository.save(user);
+        await this.usersRepository.save(user);
     }
     async deleteUser(id) {
-        this.usersRepository.delete(id);
+        await this.usersRepository.delete(id);
     }
 };
 UsersService = __decorate([

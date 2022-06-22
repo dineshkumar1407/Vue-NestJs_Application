@@ -6,15 +6,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppService = void 0;
+exports.NotificationService = void 0;
 const common_1 = require("@nestjs/common");
-let AppService = class AppService {
+let NotificationService = class NotificationService {
     getHello() {
-        return 'Hello Welcome to Blog Application!';
+        return 'Hello notify service';
     }
 };
-AppService = __decorate([
+NotificationService = __decorate([
     (0, common_1.Injectable)()
-], AppService);
-exports.AppService = AppService;
-//# sourceMappingURL=app.service.js.map
+], NotificationService);
+exports.NotificationService = NotificationService;
+//# sourceMappingURL=notification.service.js.map

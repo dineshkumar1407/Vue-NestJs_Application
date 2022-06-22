@@ -24,6 +24,7 @@ const path = require("path");
 const path_1 = require("path");
 const local_auth_guard_1 = require("../auth/local.auth.guard");
 const authenticated_guard_1 = require("../auth/authenticated.guard");
+const app_module_1 = require("../app.module");
 exports.BLOG_ENTRIES_URL = 'http://localhost:3000/api/blog-entries';
 exports.storage = {
     storage: (0, multer_1.diskStorage)({
@@ -38,18 +39,18 @@ exports.storage = {
 let BlogController = class BlogController {
     constructor(blogService) {
         this.blogService = blogService;
+        this.blogSender = app_module_1.sbClientConnection.createSender(app_module_1.blogQueueName);
     }
     create(blog, req) {
         const user = req.user;
-        return this.blogService.create(user, blog);
+        return this.blogService.create(user, blog, this.blogSender);
     }
     findOne(params) {
         console.log("findone");
         return this.blogService.findOne(params.id);
     }
     updateOne(id, blog) {
-        console.log(id, blog);
-        return this.blogService.updateOne((id), blog);
+        return this.blogService.updateOne(id, blog);
     }
     deleteOne(params) {
         console.log("delete");

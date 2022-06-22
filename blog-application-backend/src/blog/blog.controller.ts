@@ -13,7 +13,7 @@ import { Image } from './Image.interface';
 import { join } from 'path';
 import { LocalAuthGuard } from 'src/auth/local.auth.guard';
 import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
-
+import { blogQueueName,sbClientConnection } from '../app.module';
 export const BLOG_ENTRIES_URL ='http://localhost:3000/api/blog-entries';
 
 export const storage = {
@@ -31,6 +31,7 @@ export const storage = {
 
 @Controller('/blog')
 export class BlogController {
+    private blogSender=sbClientConnection.createSender(blogQueueName)
 
     constructor(private blogService: BlogService) {}
 
@@ -39,7 +40,7 @@ export class BlogController {
     @Post("/create")
     create(@Body()blog: Blog, @Request() req) {
         const user = req.user;
-        return this.blogService.create(user, blog);
+        return this.blogService.create(user, blog,this.blogSender);
     }
     @Get(':id')
     findOne(@Param() params) {

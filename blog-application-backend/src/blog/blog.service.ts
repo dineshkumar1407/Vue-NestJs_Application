@@ -3,7 +3,7 @@ import { Observable, of, from } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blog } from './blog.entity';
 import { FindOptionsWhere, ObjectID, Repository } from 'typeorm';
-
+import { ServiceBusMessage } from '@azure/service-bus';
 
 import { switchMap, map, tap } from 'rxjs/operators';
 
@@ -21,19 +21,29 @@ export class BlogService {
     ) {}
 
 
-     async create(user: User, blog: Blog): Promise<any> {
+     async create(user: User, blog: Blog,blogSender): Promise<any> {
         blog.author = user;
-        console.log(blog);
-        return await this.generateSlug(blog.title).pipe(
-            switchMap(async(slug: string) => {
-                blog.slug = slug;
-                return await this.blogRepository.save(blog);
-            })
-        )
+        blog.slug= await this.generateSlug(blog.title)
+        const newBlog= await this.blogRepository.save(blog)
+        if(newBlog){
+            const message:ServiceBusMessage={
+                body:{newBlog},
+                subject:"blog_created"
+            }
+            await blogSender.sendMessages(message)
+            blogSender.close()
+           }
+          
+           return {
+            message:"Blog created successfully",
+            id:newBlog.id,
+
+           }
     }
 
-    findAll(): Observable<Blog[]> {
-        return from(this.blogRepository.find({relations: ['author']}));
+    async findAll(): Promise<Blog[]> {
+        const myblogs= await this.blogRepository.find({relations: ['author']});
+        return myblogs
     }
 
      async findOne(id): Promise<Blog> {
@@ -63,7 +73,7 @@ export class BlogService {
        return this.blogRepository.delete(id)
     }
 
-    generateSlug(title: string): Observable<string> {
-        return of(slugify(title));
+    generateSlug(title: string): Promise<string> {
+        return slugify(title);
     }
 }

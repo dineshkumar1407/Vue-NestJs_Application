@@ -19,13 +19,15 @@ const user_entity_1 = require("./user.entity");
 const local_auth_guard_1 = require("../auth/local.auth.guard");
 const authenticated_guard_1 = require("../auth/authenticated.guard");
 const auth_service_1 = require("../auth/auth.service");
+const app_module_1 = require("../app.module");
 let UsersController = class UsersController {
     constructor(authService, service) {
         this.authService = authService;
         this.service = service;
+        this.Usersender = app_module_1.sbClientConnection.createSender(app_module_1.usersQueueName);
     }
     create(user) {
-        return this.service.createUser(user);
+        return this.service.createUser(user, this.Usersender);
     }
     async login(req) {
         return { message: "User loged in", user: req.user };

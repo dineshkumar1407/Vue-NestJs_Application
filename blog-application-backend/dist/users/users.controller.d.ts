@@ -4,12 +4,9 @@ import { AuthService } from 'src/auth/auth.service';
 export declare class UsersController {
     private authService;
     private service;
+    private Usersender;
     constructor(authService: AuthService, service: UsersService);
-    create(user: User): Promise<{
-        msg: string;
-        id: number;
-        email: string;
-    }>;
+    create(user: User): Promise<any>;
     login(req: any): Promise<{
         message: string;
         user: any;
